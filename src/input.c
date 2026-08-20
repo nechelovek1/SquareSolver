@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 #include "input.h"
 
 int isDouble(const char s[], int n)
@@ -62,17 +64,36 @@ int isInt(const char s[], int n)
 int getDouble(double * pd)
 {
     char s[100];
+    int i = 0;
+
     char ch;
-    if(fscanf(stdin, "%lg", pd) == 1){
-        ch = fgetc(stdin);
+    ch =  fgetc(stdin);
+    while (ch != EOF && ch != ' ' && ch != '\t' && ch != '\n') {
+        s[i] = ch;
+        i ++;
+        ch =  fgetc(stdin);
+    }
+
+    if (isDouble(s, strlen(s)) || strcmp(s, "NaN") || strcmp(s, "inf")) {
+        *pd = strtod(s, NULL);
         return 1;
     } else {
-        fscanf(stdin, "%s", s);
         return 0;
     }
 }
 
-char getChar()
+char getFirstChar()
 {
-    
+    char ch = fgetc(stdin);
+    while (fgetc(stdin) != '\n') {
+        continue;
+    }
+    return ch;
+}
+
+void clearInputBuffer()
+{
+    while (getchar() != '\n') {
+        continue;
+    }
 }

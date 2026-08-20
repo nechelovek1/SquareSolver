@@ -7,24 +7,17 @@
 
 RootsCnt squareSolver(double a, double b, double c, double * x1, double * x2)
 {
-    if (assertMessage(!isinf(a), "Error: a is inf")) {
-        return ERR_ROOTS;
-    }
-    if (assertMessage(!isinf(b), "Error: b is inf")) {
-        return ERR_ROOTS;
-    }
-    if (assertMessage(!isinf(c), "Error: c is inf")) {
-        return ERR_ROOTS;
-    }
-
-    if (assertMessage(!isnan(a), "Error: a is NaN")) {
-        return ERR_ROOTS;
-    }
-    if (assertMessage(!isnan(b), "Error: b is NaN")) {
-        return ERR_ROOTS;
-    }
-    if (assertMessage(!isnan(c), "Error: c is NaN")) {
-        return ERR_ROOTS;
+    double ar[3];
+    ar[0] = a;
+    ar[1] = b;
+    ar[2] = c;
+    for (int i = 0; i < 3; i ++){
+        if (assertMessage(!isinf(ar[i]), "Error: one of arguments is inf")) {
+            return ERR_ROOTS;
+        }
+        if (assertMessage(!isnan(ar[i]), "Error: one of arguments is NaN")) {
+            return ERR_ROOTS;
+        }
     }
 
     if (assertMessage(x1 != NULL, "Error: x1 pointer is NULL")) {

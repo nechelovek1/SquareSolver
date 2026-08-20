@@ -4,6 +4,7 @@
 int isDouble(const char[], int);
 int isInt(const char[], int);
 int getDouble(double *);
-char getChar();
+char getFirstChar();
+void clearInputBuffer();
 
 #endif
