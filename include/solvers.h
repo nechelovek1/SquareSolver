@@ -1,7 +1,9 @@
 #ifndef SOLVERS_H
 #define SOLVERS_H
 
-typedef enum{
+#include <stdbool.h>
+
+typedef enum {
     ZERO_ROOTS, 
     ONE_ROOTS, 
     TWO_ROOTS, 
@@ -9,8 +11,9 @@ typedef enum{
     ERR_ROOTS
 } RootsCnt;
 
-RootsCnt squareSolver(double, double, double, double *, double *);
-RootsCnt linearSolver(double, double, double *);
-int fequal(double, double, double);
+RootsCnt solveSquare(double, double, double, double *, double *);
+RootsCnt solveLinear(double, double, double *);
+bool fequal(double, double, double);
+bool assertMessage(int, const char []);
 
 #endif
