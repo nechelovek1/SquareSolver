@@ -22,8 +22,8 @@ FILE * fOpenDefault(const char*, const char*, FILE*);
 int main(int argc, const char* argv[])
 {
     char inputFilename[MAX_STR_LEN] = "", outputFilename[MAX_STR_LEN] = "";
-    FILE * input = NULL;
-    FILE * output = NULL;
+    FILE* input = NULL;
+    FILE* output = NULL;
 
     ParseError parseRes = argParse(argc, argv, inputFilename, outputFilename);
     if (parseRes) {
@@ -52,7 +52,7 @@ int main(int argc, const char* argv[])
             fprintf(stdout, "Введите коэффициенты a, b, c уравнения ax^2+bx+c=0 (Ctrl + D для завершения)\n");
         }
 
-        int scanfRes = fscanf(input, "%lg %lg %lg ", &a, &b, &c);
+        int scanfRes = fscanf(input, "%lg %lg %lg", &a, &b, &c);
         if (scanfRes == EOF) {
             break;
         } else if (scanfRes != 3) {
@@ -80,7 +80,7 @@ int main(int argc, const char* argv[])
     return 0;
 }
 
-void fPrintRoots(FILE * fp, RootsCnt rootsCnt, double x1, double x2)
+void fPrintRoots(FILE* fp, RootsCnt rootsCnt, double x1, double x2)
 {
     switch(rootsCnt) {
     case ZERO_ROOTS:
@@ -126,24 +126,12 @@ ParseError argParse(int argc, const char* argv[], char* input, char* output)
                 return PARSE_MISSING_ARG;
             }
         } else {
-            fprintf(stderr, "Unexcepted argument %s\n", argv[idx]);
+            fprintf(stderr, "Unexpected argument %s\n", argv[idx]);
             return PARSE_UNEXCEPTED_ARG;
         }
     }
 
     return PARSE_OK;
-}
-
-int fGetFirstChar(FILE* fp)
-{
-    int ch = fgetc(fp);
-
-    while (fgetc(fp) != '\n')
-    {
-        continue;
-    }
-
-    return ch;
 }
 
 void fClearInputBuffer(FILE* fp)
@@ -157,9 +145,9 @@ void fClearInputBuffer(FILE* fp)
     }
 }
 
-FILE * fOpenDefault(const char* filename, const char* mode, FILE* def)
+FILE* fOpenDefault(const char* filename, const char* mode, FILE* def)
 {
-    FILE * fp = NULL;
+    FILE* fp = NULL;
 
     if (strlen(filename) == 0) {
         fp = def;

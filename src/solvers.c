@@ -5,28 +5,17 @@
 #include <stdbool.h>
 
 #include "solvers.h"
+#include "errors.h"
 
 const double EPS = 1e-10;
 
-bool assertMessage(int n, const char s[])
+RootsCnt solveSquare(double a, double b, double c, double* x1, double* x2)
 {
-    if (!n) {
-        fprintf(stderr, "%s\n", s);
-        return true;
-    } else {
-        return false;
-    }
-}
+    const int coefsCnt = 3;
+    double coefs[coefsCnt] = {a, b, c};
 
-RootsCnt solveSquare(double a, double b, double c, double * x1, double * x2)
-{
-    double arr[3] = {a, b, c};
-
-    for (int i = 0; i < 3; i ++) {
-        if (assertMessage(!isinf(arr[i]), "Error: one of arguments is inf")) {
-            return ERR_ROOTS;
-        }
-        if (assertMessage(!isnan(arr[i]), "Error: one of arguments is NaN")) {
+    for (int i = 0; i < coefsCnt; i ++) {
+        if (assertInfNaN(coefs[i])) {
             return ERR_ROOTS;
         }
     }
@@ -42,11 +31,11 @@ RootsCnt solveSquare(double a, double b, double c, double * x1, double * x2)
         return ERR_ROOTS;
     }
 
-    if (fequal(a, 0, EPS)) {
+    if (isequal(a, 0, EPS)) {
         return solveLinear(b, c, x1);
     } else {
         double discr = b * b - 4 * a * c;
-        if (fequal(discr, 0, EPS)) {
+        if (isequal(discr, 0, EPS)) {
             *x1 = *x2 = -b / (2 * a);
             return ONE_ROOTS;
         } else if (discr < 0) {
@@ -59,16 +48,13 @@ RootsCnt solveSquare(double a, double b, double c, double * x1, double * x2)
     }
 }
 
-
 RootsCnt solveLinear(double a, double b, double* x)
 {
-    double arr[2] = {a, b}; // arr
+    const int coefsCnt = 2;
+    double coefs[coefsCnt] = {a, b};
 
-    for (int i = 0; i < 2; i ++) {
-        if (assertMessage(!isinf(arr[i]), "Error: one of arguments is inf")) {
-            return ERR_ROOTS;
-        }
-        if (assertMessage(!isnan(arr[i]), "Error: one of arguments is NaN")) {
+    for (int i = 0; i < coefsCnt; i ++) {
+        if (assertInfNaN(coefs[i])) {
             return ERR_ROOTS;
         }
     }
@@ -77,8 +63,8 @@ RootsCnt solveLinear(double a, double b, double* x)
         return ERR_ROOTS;
     }
 
-    if (fequal(a, 0.0, EPS)) {
-        if (fequal(b, 0.0, EPS)) {
+    if (isequal(a, 0.0, EPS)) {
+        if (isequal(b, 0.0, EPS)) {
             return INF_ROOTS;
         } else {
             return ZERO_ROOTS;
@@ -89,7 +75,74 @@ RootsCnt solveLinear(double a, double b, double* x)
     }
 }
 
-bool fequal(double x, double val, double eps)
+RootsCnt solveLinearComplex(_Complex double a, _Complex double b, _Complex double* x)
 {
-    return fabs(x - val) < eps;
+    const int coefsCnt = 2;
+    _Complex double coefs[coefsCnt] = {a, b};
+    
+    for (int i = 0; i < coefsCnt; i++) {
+        if (assertInfNaNComplex(coefs[i])) {
+            return ERR_ROOTS;
+        }
+    }
+
+    if (assertMessage(x != NULL, "x pointer is NULL")) {
+        return ERR_ROOTS;
+    }
+
+    if (isequalComplex(a, 0.0, EPS)) {
+        if (isequalComplex(a, 0.0, EPS)) {
+            return INF_ROOTS;
+        } else {
+            return ZERO_ROOTS;
+        }
+    }
+
+    *x = -b / a;
+
+    return ONE_ROOTS;
+}
+
+RootsCnt solveSquareComplex(_Complex double a, _Complex double b, _Complex double c, _Complex double* x1, _Complex double* x2)
+{
+    const int coefsCnt = 3;
+    _Complex double coefs[coefsCnt] = {a, b, c};
+
+    for (int i = 0; i < coefsCnt; i++) {
+        if (assertInfNaNComplex(coefs[i])) {
+            return ERR_ROOTS;
+        }
+    }
+
+    if (assertMessage(x1 != NULL, "x1 pointer is NULL")) {
+        return ERR_ROOTS;
+    }
+    if (assertMessage(x2 != NULL, "x2 pointer is NULL")) {
+        return ERR_ROOTS;
+    }
+
+    if(assertMessage(x1 != x2, "Pointers collision")) {
+        return ERR_ROOTS;
+    }
+
+    if (isequalComplex(a, 0.0, EPS)) {
+        return solveLinearComplex(b, c, x1);
+    }
+
+    _Complex double d = b * b - 4 * a * c;
+    *x1 = (-b - csqrt(d)) / (2 * a);
+    *x2 = (-b + csqrt(d)) / (2 * a);
+    
+    return TWO_ROOTS;
+}
+
+
+bool isequal(double v1, double v2, double eps)
+{
+    return fabs(v1 - v2) < eps;
+}
+
+bool isequalComplex(_Complex double c1, _Complex double c2, double eps)
+{
+    return (isequal(creal(c1), creal(c2), eps) && isequal(cimag(c2), cimag(c2), eps));
 }
