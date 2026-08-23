@@ -7,7 +7,7 @@
 #include "solvers.h"
 #include "errors.h"
 
-const double EPS = 1e-10;
+const double EPS = 1e-7;
 
 RootsCnt solveSquare(double a, double b, double c, double* x1, double* x2)
 {
@@ -91,7 +91,7 @@ RootsCnt solveLinearComplex(_Complex double a, _Complex double b, _Complex doubl
     }
 
     if (isequalComplex(a, 0.0, EPS)) {
-        if (isequalComplex(a, 0.0, EPS)) {
+        if (isequalComplex(b, 0.0, EPS)) {
             return INF_ROOTS;
         } else {
             return ZERO_ROOTS;
@@ -130,6 +130,11 @@ RootsCnt solveSquareComplex(_Complex double a, _Complex double b, _Complex doubl
     }
 
     _Complex double d = b * b - 4 * a * c;
+
+    if (isequalComplex(d, 0.0, EPS)) {
+        *x1 = *x2 = -b / (2 * a);
+        return ONE_ROOTS;
+    }
     *x1 = (-b - csqrt(d)) / (2 * a);
     *x2 = (-b + csqrt(d)) / (2 * a);
     

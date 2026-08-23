@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <complex.h>
 
-
 typedef enum {
     ZERO_ROOTS, 
     ONE_ROOTS, 
@@ -12,7 +11,6 @@ typedef enum {
     INF_ROOTS,
     ERR_ROOTS
 } RootsCnt;
-
 
 RootsCnt solveSquare(double a, double b, double c, double* x1, double* x2);
 RootsCnt solveLinear(double a, double b, double* x);
