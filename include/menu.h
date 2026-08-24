@@ -16,15 +16,33 @@ typedef struct {
 
 typedef struct {
     char menuCode;
-    char menuString[MAX_STR_LEN];
+    const char* menuString;
 } MenuPoint;
 
-void fClearInputBuffer(FILE*);
-void fGetString(char * str, int cnt, FILE* fp);
-void showSettingsValues(const ProgramOptions* options);
-void setDefaultSettings(ProgramOptions* options);
-void setUserSettings(ProgramOptions* options);
+typedef enum {
+    PARSE_OK,
+    PARSE_MISSING_ARG,
+    PARSE_UNKNOWN_OPT,
+    PARSE_OPTIONS_NULL,
+} ParseError;
+
+int showSettingsValues(const ProgramOptions* options);
+int setDefaultSettings(ProgramOptions* options);
+int setUserSettings(ProgramOptions* options);
 void showSettingsMenu();
 void showMenu();
+void printHelpConsole();
+ParseError parseArgs(int argc, char* argv[], ProgramOptions* options);
+/* 
+    Парсит опции командной строки
+    Принимает на вход
+        int argc                - колличество аргументов командной строки (аргумент main)
+        char** argv             - аргументы командной строки (аргумент main)
+        ProgramOptions* options - указатель на структуру для хранения опций, полученных в результате парсинга
+    Возвращает
+        PARSE_OK          - парсинг завершился нормально
+        PARSE_MISSING_ARG - пропущен обязательный для опции аргумент
+        PARSE_UNKNOWN_OPT - неизвестная опция
+*/
 
 #endif

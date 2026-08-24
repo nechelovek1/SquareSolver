@@ -10,10 +10,12 @@
 
 #include "solvers.h"
 #include "errors.h"
+#include "parser.h"
 
 #define INF INFINITY
 
 const double EPS = 1e-7;
+const int MAX_STR_LEN = 100;
 
 typedef struct {
     double a, b, c;
@@ -24,7 +26,6 @@ typedef struct {
 
 void plotParabol(double a, double b, double c);
 double calcParabol(double a, double b, double c, double x);
-bool parseEqasion(char s[], double coefs[]);
 double randomInRange(double mn, double mx);
 
 
@@ -33,14 +34,21 @@ int runTests(int testsCnt);
 void printFailTestMessage(TestSquare testData, RootsCnt rootsCnt, double x1, double x2);
 bool compareRootsRefs(double x1, double x2, double x1Ref, double x2Ref);
 TestSquare generateTestSquare(RootsCnt rootsCnt);
-bool parsePolynom(char s[], double coefs[]);
 
 int main(int argc, const char* argv[])
 {
-    int n = 0;
-    scanf("I%n", &n);
+    int coefLen = 0, powerLen = 0, coefLenWithX = 0;
+    unsigned int power = 0;
+    double coef = NAN;
+    char s[] = "5x+6x^2+7=-8x-9x^2-10";
+    double buf[3] = {};
+    int n = parseEqation(s, strlen(s), buf, 3);
+    printf("%s\n", s);
+    printf("%lg %lg %lg\n", buf[0], buf[1], buf[2]);
     printf("%d", n);
-}
+    
+    return 0;
+}   
 
 double calcParabol(double a, double b, double c, double x) {
     return a * x * x + b * x + c;
@@ -48,7 +56,7 @@ double calcParabol(double a, double b, double c, double x) {
 
 void plotParabol(double a, double b, double c)
 {   
-    int screensize = 40;
+    const int screensize = 40;
     char screen[screensize][screensize];
     for (int i = 0; i < screensize; i++) 
     {
@@ -82,46 +90,6 @@ void plotParabol(double a, double b, double c)
             putchar(screen[i][j]);
         }
         putchar('\n');
-    }
-}
-
-bool parsePolynom(char s[], double coefs[])
-{
-    char* endptr = NULL, * startptr = s;
-
-    double coef = 0.0;
-    int power = 0;
-
-    int charCnt = 0;
-    int len = strlen(s);
-    for (int i = 0; i < len; i++) {
-        
-    }
-}
-
-bool parseEqation(char s[], double coefs[])
-{
-    int len = strlen(s);
-    bool findSign = false;
-    
-    double coef = 0.0;
-    int power = 0;
-
-    char* endptr = NULL, * startptr = s;
-
-    for (int i = 0; i < len; i++) {
-        if (s[i] == '-' || s[i] == '+') {
-            if (findSign) {
-                return false;
-            } else {
-                findSign = true;
-                startptr = &s[i];
-                continue;
-            }
-        } else if (tolower(s[i]) == 'x') {
-            coef = strtod(startptr, &endptr);
-            
-        }
     }
 }
 
@@ -215,7 +183,7 @@ int runTests(int testsCnt)
 
     srand(time(NULL));
     
-    size_t testsSpecCnt = sizeof(testsSpec) / sizeof(TestSquare);
+    size_t testsSpecCnt = sizeof(testsSpec) / sizeof(*testsSpec);
     
     for (int i = 0; i < testsSpecCnt; i++) {
         runTest(testsSpec[i]);

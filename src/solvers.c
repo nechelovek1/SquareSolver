@@ -134,7 +134,7 @@ RootsCnt solveSquareComplex(_Complex double a, _Complex double b, _Complex doubl
     if (isequalComplex(d, 0.0, EPS)) {
         *x1 = *x2 = -b / (2 * a);
         return ONE_ROOTS;
-    }
+    }   
     *x1 = (-b - csqrt(d)) / (2 * a);
     *x2 = (-b + csqrt(d)) / (2 * a);
     
