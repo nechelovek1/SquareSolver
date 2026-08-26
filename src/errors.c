@@ -5,23 +5,23 @@
 
 #include "errors.h"
 
-bool assertMessage(bool n, const char s[])
+bool assertMessage(bool expressionResult, const char message[])
 {
-    if (!n) {
-        fprintf(stderr, "%s\n", s);
+    if (!expressionResult) {
+        fprintf(stderr, "%s\n", message);
         return true;
     } else {
         return false;
     }
 }
 
-bool assertInfNaN(double a)
+bool assertInfNaN(double d)
 {
-    if (assertMessage(!isnan(a), "Argument is NaN")) {
+    if (assertMessage(!isnan(d), "Argument is NaN")) {
         return true;
     }
 
-    if (assertMessage(!isinf(a), "Argument is inf")) {
+    if (assertMessage(!isinf(d), "Argument is inf")) {
         return true;
     }
 

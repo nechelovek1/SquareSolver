@@ -48,7 +48,7 @@ void showSettingsMenu()
 
     int menuLen = sizeof(menu) / sizeof(menu[0]);
 
-    for (int i = 0; i < menuLen; i++) 
+    for (unsigned int i = 0; i < menuLen; i++) 
     {
         printf("%c) %s\n", menu[i].menuCode, menu[i].menuString);
     }
@@ -77,7 +77,8 @@ int setUserSettings(ProgramOptions* options)
 
     int choice = '\0';
 
-    while (choice != 'e' && choice != EOF) {
+    while (choice != 'e' && choice != EOF) 
+    {
         showSettingsValues(options);
         showSettingsMenu();
         
@@ -91,7 +92,7 @@ int setUserSettings(ProgramOptions* options)
                 fGetString(stdin, options->inputFilename, MAX_STR_LEN);
                 break;
             case 'o':
-                printf("Enter output filename (Enter for stdout): ");
+                printf("Enter output filename (Press Enter for stdout): ");
                 fGetString(stdin, options->outputFilename, MAX_STR_LEN);
                 break;
             case 'r':
@@ -104,12 +105,12 @@ int setUserSettings(ProgramOptions* options)
                 options->useParseEquation = !options->useParseEquation;
                 break;     
             case 'e':
+            case EOF:
                 printf("Exit\n");
                 break;
             default:
-                printf("Unknown\n");
+                printf("Unknown option\n");
         }
-        
     } 
 
     return 0;
@@ -124,9 +125,9 @@ void showMenu()
         {.menuCode = 'e', .menuString = "exit"}
     };
     
-    int menuLen = sizeof(menu) / sizeof(MenuPoint);
+    unsigned int menuLen = sizeof(menu) / sizeof(MenuPoint);
 
-    for (int i = 0; i < menuLen; i++) 
+    for (unsigned int i = 0; i < menuLen; i++) 
     {
         printf("%c) %s\n", menu[i].menuCode, menu[i].menuString);
     }
@@ -140,9 +141,9 @@ void printHelpConsole()
         "-h show help\n"
         "-i -I <filename> name of input file. If omited, use standart input (console)\n"
         "-o -O <filename> name of output file. If omited, use standart output (console)\n"
-        "-c               use complex input\n"
-        "-p               use parser for equasions\n"
-        "-r               show complex roots\n"
+        "-c -C            use complex input\n"
+        "-p -p            use parser for equasions\n"
+        "-r -R            show complex roots\n"
     );
 }
 
@@ -154,10 +155,10 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options)
 
     int opt = 0;
 
-    while ((opt = getopt(argc, argv, ":I:i:O:o:hcrp")) != -1) {
-        switch(opt)
+    while ((opt = getopt(argc, argv, "I:i:O:o:hHcCrRpP")) != -1) 
+    {
+        switch(tolower(opt))
         {
-            case 'I':
             case 'i':
                 if (optarg == NULL) {
                     printf("Missing argument after -i\n");
@@ -165,7 +166,6 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options)
                 }
                 strncpy(options->inputFilename, optarg, MAX_STR_LEN);
                 break;
-            case 'O':
             case 'o':
                 if (optarg == NULL) {
                     printf("Missing argument after -o\n");

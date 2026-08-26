@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <complex.h>
 
+const double EPS = 1e-7;
+
 typedef enum {
     ZERO_ROOTS, 
     ONE_ROOTS, 
@@ -60,7 +62,28 @@ RootsCnt solveSquareComplex(_Complex double a, _Complex double b, _Complex doubl
 */
 RootsCnt solveLinearComplex(_Complex double a, _Complex double b, _Complex double* x);
 
-bool isequalComplex(_Complex double c1, _Complex double c2, double eps);
+/*
+    Сравнивает 2 действительных числа
+    Аргументы:
+        double v1  - первое число
+        double v2  - второе число
+        double eps - погрешность при которой числа можно считать равными
+    Возвращаемое значение:
+        bool 
+
+*/
 bool isequal(double v1, double v2, double eps);
+
+/*
+    Сравнивает 2 комплексных числа
+    Аргументы:
+        _Complex double v1  - первое число
+        _Complex double v2  - второе число
+        double eps          - погрешность при которой числа можно считать равными
+    Возвращаемое значение:
+        bool 
+
+*/
+bool isequalComplex(_Complex double c1, _Complex double c2, double eps);
 
 #endif

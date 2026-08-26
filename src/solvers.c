@@ -7,14 +7,12 @@
 #include "solvers.h"
 #include "errors.h"
 
-const double EPS = 1e-7;
-
 RootsCnt solveSquare(double a, double b, double c, double* x1, double* x2)
 {
-    const int coefsCnt = 3;
+    const unsigned int coefsCnt = 3;
     double coefs[coefsCnt] = {a, b, c};
 
-    for (int i = 0; i < coefsCnt; i ++) {
+    for (unsigned int i = 0; i < coefsCnt; i ++) {
         if (assertInfNaN(coefs[i])) {
             return ERR_ROOTS;
         }
@@ -50,10 +48,10 @@ RootsCnt solveSquare(double a, double b, double c, double* x1, double* x2)
 
 RootsCnt solveLinear(double a, double b, double* x)
 {
-    const int coefsCnt = 2;
+    const unsigned int coefsCnt = 2;
     double coefs[coefsCnt] = {a, b};
 
-    for (int i = 0; i < coefsCnt; i ++) {
+    for (unsigned int i = 0; i < coefsCnt; i ++) {
         if (assertInfNaN(coefs[i])) {
             return ERR_ROOTS;
         }
@@ -77,10 +75,10 @@ RootsCnt solveLinear(double a, double b, double* x)
 
 RootsCnt solveLinearComplex(_Complex double a, _Complex double b, _Complex double* x)
 {
-    const int coefsCnt = 2;
+    const unsigned int coefsCnt = 2;
     _Complex double coefs[coefsCnt] = {a, b};
     
-    for (int i = 0; i < coefsCnt; i++) {
+    for (unsigned int i = 0; i < coefsCnt; i++) {
         if (assertInfNaNComplex(coefs[i])) {
             return ERR_ROOTS;
         }
@@ -105,10 +103,10 @@ RootsCnt solveLinearComplex(_Complex double a, _Complex double b, _Complex doubl
 
 RootsCnt solveSquareComplex(_Complex double a, _Complex double b, _Complex double c, _Complex double* x1, _Complex double* x2)
 {
-    const int coefsCnt = 3;
+    const unsigned int coefsCnt = 3;
     _Complex double coefs[coefsCnt] = {a, b, c};
 
-    for (int i = 0; i < coefsCnt; i++) {
+    for (unsigned int i = 0; i < coefsCnt; i++) {
         if (assertInfNaNComplex(coefs[i])) {
             return ERR_ROOTS;
         }

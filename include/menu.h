@@ -32,7 +32,7 @@ int setUserSettings(ProgramOptions* options);
 void showSettingsMenu();
 void showMenu();
 void printHelpConsole();
-ParseError parseArgs(int argc, char* argv[], ProgramOptions* options);
+
 /* 
     Парсит опции командной строки
     Принимает на вход
@@ -44,5 +44,6 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options);
         PARSE_MISSING_ARG - пропущен обязательный для опции аргумент
         PARSE_UNKNOWN_OPT - неизвестная опция
 */
+ParseError parseArgs(int argc, char* argv[], ProgramOptions* options);
 
 #endif

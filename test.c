@@ -8,45 +8,19 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "solvers.h"
 #include "errors.h"
 #include "parser.h"
+#include "tests.h"
 
-#define INF INFINITY
-
-const double EPS = 1e-7;
 const int MAX_STR_LEN = 100;
-
-typedef struct {
-    double a, b, c;
-    RootsCnt rootsCntRef;
-    double x1Ref, x2Ref;
-} TestSquare;
-
 
 void plotParabol(double a, double b, double c);
 double calcParabol(double a, double b, double c, double x);
-double randomInRange(double mn, double mx);
-
-
-int runTest(TestSquare testData);
-int runTests(int testsCnt);
-void printFailTestMessage(TestSquare testData, RootsCnt rootsCnt, double x1, double x2);
-bool compareRootsRefs(double x1, double x2, double x1Ref, double x2Ref);
-TestSquare generateTestSquare(RootsCnt rootsCnt);
 
 int main(int argc, const char* argv[])
 {
-    int coefLen = 0, powerLen = 0, coefLenWithX = 0;
-    unsigned int power = 0;
-    double coef = NAN;
-    char s[] = "5x+6x^2+7=-8x-9x^2-10";
-    double buf[3] = {};
-    int n = parseEqation(s, strlen(s), buf, 3);
-    printf("%s\n", s);
-    printf("%lg %lg %lg\n", buf[0], buf[1], buf[2]);
-    printf("%d", n);
-    
+    int successCnt = runTests(10000000);
+    printf("%d\n", successCnt);
     return 0;
 }   
 
@@ -91,109 +65,4 @@ void plotParabol(double a, double b, double c)
         }
         putchar('\n');
     }
-}
-
-void printFailTestMessage(TestSquare testData, RootsCnt rootsCnt, double x1, double x2)
-{
-    printf("Test FAILED: a=%lg, b=%lg, c=%lg\n"
-           "Expected %d roots, x1ref=%lg, x2ref=%lg\n"
-           "Got:     %d roots, x1=%lg,    x2=%lg\n",
-           testData.a, testData.b, testData.c, 
-           testData.rootsCntRef, testData.x1Ref, testData.x2Ref,
-           rootsCnt, x1, x2 
-    );
-}
-
-int runTest(TestSquare testData) 
-{
-    double x1 = NAN, x2 = NAN;
-    RootsCnt rootsCnt = solveSquare(testData.a, testData.b, testData.c, &x1, &x2);
-    if (rootsCnt != testData.rootsCntRef) {
-        printFailTestMessage(testData, rootsCnt, x1, x2);
-        return 0;
-    } else if (rootsCnt == ERR_ROOTS || rootsCnt == ZERO_ROOTS) {
-        return 1;      
-    } else if ((rootsCnt == ONE_ROOTS) && !(isequal(x1, testData.x1Ref, EPS) || isequal(x2, testData.x1Ref, EPS))) {
-        printFailTestMessage(testData, rootsCnt, x1, x2);
-        return 0;
-    } else if ((rootsCnt == TWO_ROOTS) && !compareRootsRefs(x1, x2, testData.x1Ref, testData.x2Ref)){
-        printFailTestMessage(testData, rootsCnt, x1, x2);
-        return 0;
-    } else {
-        return 1;
-    }
-}
-
-bool compareRootsRefs(double x1, double x2, double x1Ref, double x2Ref) 
-{
-    return ((isequal(x1, x1Ref, EPS) && isequal(x2, x2Ref, EPS)) || (isequal(x1, x2Ref, EPS) && isequal(x2, x1Ref, EPS)));
-}
-
-double randomInRange(double mn, double mx)
-{
-    double randVal = (double) rand() / RAND_MAX;
-    return mn + randVal * (mx - mn);
-}
-
-TestSquare generateTestSquare(RootsCnt rootsCnt)
-{
-    const int mn = -100, mx = 100;
-
-    TestSquare test;
-
-    test.x1Ref = randomInRange(mn, mx);
-
-    switch(rootsCnt)
-    {
-        case ONE_ROOTS:
-            test.rootsCntRef = ONE_ROOTS;
-            test.x2Ref = test.x1Ref;
-            break;
-        case TWO_ROOTS:
-            test.rootsCntRef = TWO_ROOTS;
-            test.x2Ref = randomInRange(mn, mx);
-            break;           
-        default:
-            test.rootsCntRef = TWO_ROOTS;
-            test.x2Ref = randomInRange(mn, mx);
-            break;                
-    }
-
-    test.a = randomInRange(mn, mx);
-    test.b = -test.a * (test.x1Ref + test.x2Ref);
-    test.c = test.a * test.x1Ref * test.x2Ref;
-
-    return test;
-}
-
-int runTests(int testsCnt)
-{   
-    TestSquare testsSpec[] = {
-        {.a = 0,   .b = 0,   .c = 0,   .rootsCntRef = INF_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = 0,   .c = 1,   .rootsCntRef = ZERO_ROOTS, .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = 1,   .c = 0,   .rootsCntRef = ONE_ROOTS,  .x1Ref = 0,   .x2Ref = NAN},
-        {.a = 0,   .b = 1,   .c = 2,   .rootsCntRef = ONE_ROOTS,  .x1Ref = -2,  .x2Ref = NAN},
-        {.a = NAN, .b = 0,   .c = 0,   .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = NAN, .c = 0,   .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = 0,   .c = NAN, .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = INF, .b = 0,   .c = 0,   .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = INF, .c = 0,   .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-        {.a = 0,   .b = 0,   .c = INF, .rootsCntRef = ERR_ROOTS,  .x1Ref = NAN, .x2Ref = NAN},
-    };
-
-    srand(time(NULL));
-    
-    size_t testsSpecCnt = sizeof(testsSpec) / sizeof(*testsSpec);
-    
-    for (int i = 0; i < testsSpecCnt; i++) {
-        runTest(testsSpec[i]);
-    }
-
-    for (int i = 0; i < testsCnt; i++) {
-        TestSquare test2 = generateTestSquare(TWO_ROOTS);
-        runTest(test2);
-        TestSquare test1 = generateTestSquare(ONE_ROOTS);
-        runTest(test1);
-    }
-    return 1;
 }

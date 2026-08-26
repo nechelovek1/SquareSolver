@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <complex.h>
 #include <string.h>
+#include <assert.h>
 
 #include "io.h"
 #include "solvers.h"
-
-const double EPS = 1e-10;
+#include "errors.h"
 
 int fClearInputBuffer(FILE* fp)
 {
@@ -25,13 +25,15 @@ int fClearInputBuffer(FILE* fp)
     return 0;
 }
 
-int fGetString(FILE* fp, char* str, int cnt)
+int fGetString(FILE* fp, char* str, unsigned int cnt)
 {
     if (fp == NULL || str == NULL) {
         return -1;
     }
 
-    fgets(str, cnt, fp);
+    if (fgets(str, cnt, fp) == NULL) {
+        return -1;
+    }
     
     size_t len = strlen(str);
 
@@ -127,14 +129,10 @@ int fPrintComplex(FILE* fp, _Complex double c)
     return 0;
 }
 
-//TODO доделать функцию чтения комплексного числа
+//TODO cделать функцию чтения комплексного числа
 int fGetComplex(FILE* fp, _Complex double* c)
 {
-    double im = 0.0, re = 0.0;
-    int n = 0;
-
-    int scanfRes = fscanf(fp, "%lg%lg", &re, &im);
-    
+    assert(0);
 
     return 0;
 }
@@ -160,6 +158,16 @@ int fPrintEquation(FILE* fp, double a, double b, double c)
 {
     if (fp == NULL) {
         return -1;
+    }
+
+    const unsigned int coefsCnt = 3;
+    double coefs[coefsCnt] = {a, b, c};
+
+    for (unsigned int i = 0; i < coefsCnt; i++) 
+    {
+        if (assertInfNaN(coefs[i])) {
+            return -1;
+        }
     }
     
     fprintf(fp, "%lgx^2%+lgx%+lg=0\n", a, b, c);

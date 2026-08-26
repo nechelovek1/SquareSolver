@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
 
     int choice = ' ';
 
-    while (choice != EOF && choice != 'e') {
+    while (choice != EOF && choice != 'e') 
+    {
 
         showMenu();
 
@@ -107,14 +108,18 @@ int solveSquareInLoop(const ProgramOptions* options)
         double a = 0, b = 0, c = 0;
 
         if (options->useParseEquation) {
-            const int coefsCnt = 3;
+            const unsigned int coefsCnt = 3;
+
             double coefs[coefsCnt] = {};
-            
             char equation[MAX_STR_LEN] = {};
-            fGetString(input, equation, MAX_STR_LEN);
+
+            if (fGetString(input, equation, MAX_STR_LEN) == -1) {
+                break;
+            }
 
             if (parseEqation(equation, strlen(equation), coefs, coefsCnt) == -1) {
                 printf("Parser error\n");
+                continue;
             } else {
                 a = coefs[0];
                 b = coefs[1];

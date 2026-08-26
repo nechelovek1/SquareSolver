@@ -49,7 +49,6 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
             if (powerLen == 0) {
                 power = 1;
             } else if (powerLen == 1) {
-                printf("2down");
                 return -1;
             } 
         }
@@ -57,7 +56,6 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         if (power < coefsCnt){
             coefs[coefsCnt - 1 - power] += coef;
         } else {
-            printf("1down");
             return -1;
         }
     }
@@ -71,8 +69,8 @@ int parseEqation(const char s[], unsigned int len, double coefs[], unsigned int 
         return -1;
     }
 
-    double coefsLeft[MAX_COEFS];
-    double coefsRight[MAX_COEFS];
+    double coefsLeft[MAX_COEFS] = {};
+    double coefsRight[MAX_COEFS] = {};
 
     const char *left = s;
     const char *right = strchr(s, '=');
@@ -85,18 +83,16 @@ int parseEqation(const char s[], unsigned int len, double coefs[], unsigned int 
     if (right == s + len - 1) {
         return -1;
     }
+    //проверка является ли '=' первым символом строки
+    if (right == s) {
+        return -1;
+    }
     
     unsigned int lenLeft = (unsigned int) (right - s);
     //в случае успешной инициализации right укаазывает на '='. Чтобу указатель был на начало правой части, его нужно увеличить на 1
     right++;
     //разница len и lenLeft - длина правой части включая пробельный символ
     unsigned int lenRight = (len - lenLeft - 1);    
-
-    for (unsigned int i = 0; i < coefsCnt; i++) 
-    {
-        coefsLeft[i] = 0;
-        coefsRight[i] = 0;
-    }
 
     if ((parsePolynom(left, lenLeft, coefsLeft, coefsCnt) == -1) || (parsePolynom(right, lenRight, coefsRight, coefsCnt) == -1)) {
         return -1;
