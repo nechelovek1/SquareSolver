@@ -5,6 +5,9 @@
 
 const int MAX_STR_LEN = 100;
 
+/*!
+    \brief структура для хранения настроек
+*/
 typedef struct {
     char inputFilename[MAX_STR_LEN];
     char outputFilename[MAX_STR_LEN];

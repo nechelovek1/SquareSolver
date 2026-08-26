@@ -46,7 +46,7 @@ void showSettingsMenu()
         {.menuCode = 'e', .menuString = "exit"}
     };
 
-    int menuLen = sizeof(menu) / sizeof(menu[0]);
+    unsigned int menuLen = sizeof(menu) / sizeof(menu[0]);
 
     for (unsigned int i = 0; i < menuLen; i++) 
     {
@@ -65,6 +65,8 @@ int setDefaultSettings(ProgramOptions* options)
     options->showComplexRoots = false;
     options->useComplexEnter = false;
     options->useParseEquation = false;
+
+    showSettingsValues(options);
 
     return 0;
 }

@@ -40,7 +40,8 @@ int runTest(TestSquare testData)
 
 bool compareRootsRefs(double x1, double x2, double x1Ref, double x2Ref) 
 {
-    return ((isequal(x1, x1Ref, EPS) && isequal(x2, x2Ref, EPS)) || (isequal(x1, x2Ref, EPS) && isequal(x2, x1Ref, EPS)));
+    return ((isequal(x1, x1Ref, EPS) && isequal(x2, x2Ref, EPS)) || 
+            (isequal(x1, x2Ref, EPS) && isequal(x2, x1Ref, EPS)));
 }
 
 double randomInRange(double mn, double mx)
@@ -107,7 +108,7 @@ int runTests(int testsCnt)
 
     for (int i = 0; i < testsCnt; i++) {
         TestSquare test2 = generateTestSquare(TWO_ROOTS);
-        successCnt += runTest(test2);
+        successCnt +=  runTest(test2);
         TestSquare test1 = generateTestSquare(ONE_ROOTS);
         successCnt +=  runTest(test1);
     }

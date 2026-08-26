@@ -10,13 +10,40 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         return -1;
     }
 
+    double coef = 0;
+    unsigned int power = 0;
+    int coefLen = 0, coefLenWithX = 0, powerLen = 0;
+
     const char* cptr = s;
+
+    if (sscanf(cptr, "x%n", &coefLenWithX) != EOF && coefLenWithX == 1) {
+        coefLenWithX = 1;
+        coef = 1;
+    }
+
+    cptr += coefLenWithX;
+
+    if (cptr - s < len) {
+        sscanf(cptr, "^%u%n", &power, &powerLen);
+        cptr += powerLen;
+        if (powerLen == 0) {
+            power = 1;
+        } else if (powerLen == 1) {
+            return -1;
+        } 
+    }
+
+    if (power < coefsCnt){
+        coefs[coefsCnt - 1 - power] += coef;
+    } else {
+        return -1;
+    }
 
     while (cptr - s < len)
     {
-        double coef = 0;
-        unsigned int power = 0;
-        int coefLen = 0, coefLenWithX = 0, powerLen = 0;
+        coef = 0;
+        power = 0;
+        coefLen = 0, coefLenWithX = 0, powerLen = 0;
 
         sscanf(cptr, "%lf%nx%n", &coef, &coefLen, &coefLenWithX);
         
@@ -26,9 +53,6 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
                 coef = -1;
             } else if (sscanf(cptr, "+x%n", &coefLenWithX) != EOF && coefLenWithX == 2) {
                 coefLen = 1;
-                coef = 1;
-            } else if (sscanf(cptr, "x%n", &coefLenWithX) != EOF && coefLenWithX == 1) {
-                coefLen = 0;
                 coef = 1;
             } else {
                 return -1;

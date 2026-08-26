@@ -31,7 +31,7 @@ int fGetString(FILE* fp, char* str, unsigned int cnt)
         return -1;
     }
 
-    if (fgets(str, cnt, fp) == NULL) {
+    if (fgets(str, (int) cnt, fp) == NULL) {
         return -1;
     }
     
@@ -129,13 +129,15 @@ int fPrintComplex(FILE* fp, _Complex double c)
     return 0;
 }
 
-//TODO cделать функцию чтения комплексного числа
+//TODO cделать функцию чтения комплексного числ
+/*
 int fGetComplex(FILE* fp, _Complex double* c)
 {
     assert(0);
 
     return 0;
 }
+*/
 
 FILE* fOpenDefault(const char* filename, const char* mode, FILE* def)
 {
@@ -158,16 +160,6 @@ int fPrintEquation(FILE* fp, double a, double b, double c)
 {
     if (fp == NULL) {
         return -1;
-    }
-
-    const unsigned int coefsCnt = 3;
-    double coefs[coefsCnt] = {a, b, c};
-
-    for (unsigned int i = 0; i < coefsCnt; i++) 
-    {
-        if (assertInfNaN(coefs[i])) {
-            return -1;
-        }
     }
     
     fprintf(fp, "%lgx^2%+lgx%+lg=0\n", a, b, c);

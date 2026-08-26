@@ -28,14 +28,13 @@ int main(int argc, char* argv[])
     printf("Program for solving quadratic equations\n");
     
     showSettingsValues(&options);
-    solveSquareInLoop(&options);
+    solveSquareInLoop (&options);
     printf("Solve loop done\n");
 
-    int choice = ' ';
+    int choice = '\0';
 
     while (choice != EOF && choice != 'e') 
     {
-
         showMenu();
 
         choice = getchar();
@@ -53,7 +52,7 @@ int main(int argc, char* argv[])
                 break;
             case 'r':
                 showSettingsValues(&options);
-                solveSquareInLoop(&options);
+                solveSquareInLoop (&options);
                 printf("Solve loop done\n");
                 break;
             default:
@@ -117,7 +116,7 @@ int solveSquareInLoop(const ProgramOptions* options)
                 break;
             }
 
-            if (parseEqation(equation, strlen(equation), coefs, coefsCnt) == -1) {
+            if (parseEqation(equation, (unsigned int) strlen(equation), coefs, coefsCnt) == -1) {
                 printf("Parser error\n");
                 continue;
             } else {
