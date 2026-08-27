@@ -20,8 +20,30 @@ double calcParabol(double a, double b, double c, double x);
 
 int main(int argc, const char* argv[])
 {
-    runTestsParser();
-    runTestsSquare(10000000);
+    const char* tests[] = {
+        "x^2+x+3+4x+5=0",
+        "2.3x-3+4x^2=x-x+6",
+        "0=0",
+        "x=x",
+        "lksdhlksdahflsa",
+        "+xxxx=-xxxxx",
+        "2.3x-3+4x^2.1=x-x+6"
+    };
+
+    unsigned int len = sizeof(tests) / sizeof(tests[0]);
+
+    for (unsigned int i = 0; i < len; i++)
+    {
+        printf("%u\n", i);
+        const unsigned int coefCnt = 3;
+        double coefs[coefCnt] = {};
+        parseEqation(tests[i], strlen(tests[i]), coefs, coefCnt);
+        printf("%s\n", tests[i]);
+        printf("%lg %lg %lg\n", coefs[0], coefs[1], coefs[2]);
+    }
+
+    //runTestsParser();
+    //runTestsSquare(10000000);
     return 0;
 }   
 

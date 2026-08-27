@@ -160,6 +160,7 @@ void runTestsParser()
     for (unsigned int i = 0; i < testsCnt; i++)
     {
         if(runTestParser(tests[i])) {
+            printf("Test %u done", i);
             correct++;
         }
     }
