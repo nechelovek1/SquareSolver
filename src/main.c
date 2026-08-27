@@ -2,7 +2,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-#include <unistd.h>
+#include <stdlib.h>
 
 #include "solvers.h"
 #include "menu.h"
@@ -10,6 +10,7 @@
 #include "parser.h"
 
 int solveSquareInLoop(const ProgramOptions* options);
+int getCoefs(const ProgramOptions* options, FILE* input, double* a, double* b, double* c);
 
 int main(int argc, char* argv[])
 {
@@ -28,7 +29,7 @@ int main(int argc, char* argv[])
     printf("Program for solving quadratic equations\n");
     
     showSettingsValues(&options);
-    solveSquareInLoop (&options);
+    solveSquareInLoop(&options);
     printf("Solve loop done\n");
 
     int choice = '\0';
@@ -92,13 +93,13 @@ int solveSquareInLoop(const ProgramOptions* options)
             int choice = getchar();
             fClearInputBuffer(input);
 
-            if (tolower(choice) == 'e') {
+            if (tolower(choice) == 'e' || choice == EOF) {
                 break;
             }
 
             if (options->useParseEquation)
             {
-                printf("Enter equation ax^2+bx+c+...=dx^2+ex+f+...\n");
+                printf("Enter equation ax^2+bx+c+...=dx^2+ex+f+...(without spaces)\n");
             } else {
                 printf("Enter coefs a, b, c of equation ax^2+bx+c=0\n");
             }
@@ -106,35 +107,9 @@ int solveSquareInLoop(const ProgramOptions* options)
 
         double a = 0, b = 0, c = 0;
 
-        if (options->useParseEquation) {
-            const unsigned int coefsCnt = 3;
-
-            double coefs[coefsCnt] = {};
-            char equation[MAX_STR_LEN] = {};
-
-            if (fGetString(input, equation, MAX_STR_LEN) == -1) {
-                break;
-            }
-
-            if (parseEqation(equation, (unsigned int) strlen(equation), coefs, coefsCnt) == -1) {
-                printf("Parser error\n");
-                continue;
-            } else {
-                a = coefs[0];
-                b = coefs[1];
-                c = coefs[2];
-            }
-
-        } else {
-            int scanfRes = fscanf(input, "%lg %lg %lg", &a, &b, &c);
-            if (scanfRes == EOF) {
-                break;
-            } else if (scanfRes != 3) {
-                fprintf(output, "Enter error\n");
-                fClearInputBuffer(input);
-                continue;
-            }
-            fClearInputBuffer(input);
+        int getCoefsRes = getCoefs(options, input, &a, &b, &c);
+        if (getCoefsRes == -1) {
+            continue;
         }
 
         if (options->useComplexEnter || options->showComplexRoots) {
@@ -155,6 +130,52 @@ int solveSquareInLoop(const ProgramOptions* options)
     }
     if (input != stdin) {
         fclose(input);
+    }
+
+    return 0;
+}
+
+int getCoefs(const ProgramOptions* options, FILE* input, double* a, double* b, double* c)
+{
+    if (options == NULL || input == NULL) {
+        return -1;
+    }
+
+    if (options->useParseEquation) {
+        const unsigned int coefsCnt = 3;
+
+        double coefs[coefsCnt] = {};
+        char equation[MAX_STR_LEN] = {};
+
+        if (fGetString(input, equation, MAX_STR_LEN) == -1) {
+            //break;
+            return -1;
+        }
+
+        removeSpaces(equation);
+
+        if (parseEqation(equation, (unsigned int) strlen(equation), coefs, coefsCnt) == -1) {
+            printf("Parser error\n");
+            //continue;
+            return -1;
+        } else {
+            *a = coefs[0];
+            *b = coefs[1];
+            *c = coefs[2];
+        }
+
+    } else {
+        int scanfRes = fscanf(input, "%lg %lg %lg", a, b, c);
+        if (scanfRes == EOF) {
+            return -1;
+            //break;
+        } else if (scanfRes != 3) {
+            printf("Enter error\n");
+            fClearInputBuffer(input);
+            //continue;
+            return -1;
+        }
+        fClearInputBuffer(input);
     }
 
     return 0;

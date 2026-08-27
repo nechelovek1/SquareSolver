@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "tests.h"
 #include "solvers.h"
+#include "parser.h"
 
 #define INF INFINITY
 
@@ -18,7 +20,7 @@ void printFailTestMessage(TestSquare testData, RootsCnt rootsCnt, double x1, dou
     );
 }
 
-int runTest(TestSquare testData) 
+int runTestSquare(TestSquare testData) 
 {
     double x1 = NAN, x2 = NAN;
     RootsCnt rootsCnt = solveSquare(testData.a, testData.b, testData.c, &x1, &x2);
@@ -81,7 +83,7 @@ TestSquare generateTestSquare(RootsCnt rootsCnt)
     return test;
 }
 
-int runTests(int testsCnt)
+int runTestsSquare(int testsCnt)
 {   
     int successCnt = 0;
 
@@ -103,14 +105,64 @@ int runTests(int testsCnt)
     size_t testsSpecCnt = sizeof(testsSpec) / sizeof(*testsSpec);
     
     for (int i = 0; i < testsSpecCnt; i++) {
-        successCnt += runTest(testsSpec[i]);
+        successCnt += runTestSquare(testsSpec[i]);
     }
 
     for (int i = 0; i < testsCnt; i++) {
         TestSquare test2 = generateTestSquare(TWO_ROOTS);
-        successCnt +=  runTest(test2);
+        successCnt +=  runTestSquare(test2);
         TestSquare test1 = generateTestSquare(ONE_ROOTS);
-        successCnt +=  runTest(test1);
+        successCnt +=  runTestSquare(test1);
     }
     return successCnt;
+}
+
+int runTestParser(TestParser test)
+{
+    const unsigned int coefsCnt = 3;
+    double coefs[coefsCnt] = {};
+    
+    int returnVal = parseEqation(test.parseString, strlen(test.parseString), coefs, coefsCnt);
+    
+    if (returnVal != test.returnVal) {
+        printf("Test FAILED\n");
+    } else if (returnVal == -1) {
+        return 1;
+    }
+
+    for (unsigned int i = 0; i < test.coefsCnt; i++)
+    {
+        if (!isequal(coefs[i], test.coefs[i], EPS)) {
+            printf("Test FAILED\n");
+            return 0;
+        }
+    }
+
+    return 1;
+    
+}
+
+void runTestsParser()
+{
+    TestParser tests[] = {
+        {"x^2+x+3+4x+5=0",              3, 0,  {1,    5,    8}},
+        {"2.3x-3+4x^2=x-x+6",           3, 0,  {4,    2.3,  9}},
+        {"0=0",                         3, 0,  {0,    0,    0}},
+        {"x=x",                         3, 0,  {0,    0,    0}},
+        {"lksdhlksdahflsa",             3, -1},
+        {"+xxxx=-xxxxx",                3, -1},
+        {"2.3x-3+4x^2.1=x-x+6",         3, -1},
+    };
+
+    unsigned int testsCnt = sizeof(tests) / sizeof(tests[0]);
+    unsigned int correct = 0;
+
+    for (unsigned int i = 0; i < testsCnt; i++)
+    {
+        if(runTestParser(tests[i])) {
+            correct++;
+        }
+    }
+    printf("%lg\n", (double) correct / testsCnt);
+
 }

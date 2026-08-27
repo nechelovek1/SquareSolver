@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "parser.h"
 
@@ -17,13 +18,18 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
     const char* cptr = s;
 
     if (sscanf(cptr, "x%n", &coefLenWithX) != EOF && coefLenWithX == 1) {
-        coefLenWithX = 1;
+        coefLen = 0;
         coef = 1;
+        power = 1;
+    } else if (parseCoef(cptr, &coef, &coefLen, &coefLenWithX) == -1) {
+        return -1;
     }
 
     cptr += coefLenWithX;
 
-    if (cptr - s < len) {
+    if (coefLen == coefLenWithX || coefLenWithX == 0) {
+        power = 0;
+    } else if (cptr - s < len) {
         sscanf(cptr, "^%u%n", &power, &powerLen);
         cptr += powerLen;
         if (powerLen == 0) {
@@ -35,6 +41,7 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
 
     if (power < coefsCnt){
         coefs[coefsCnt - 1 - power] += coef;
+        //printf("%u %lg\n", power, coef);
     } else {
         return -1;
     }
@@ -45,18 +52,12 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         power = 0;
         coefLen = 0, coefLenWithX = 0, powerLen = 0;
 
-        sscanf(cptr, "%lf%nx%n", &coef, &coefLen, &coefLenWithX);
+        if (*cptr != '+' && *cptr != '-') {
+            return -1;
+        }
         
-        if (coefLen == 0) {
-            if (sscanf(cptr, "-x%n", &coefLenWithX) != EOF && coefLenWithX == 2) {
-                coefLen = 1;
-                coef = -1;
-            } else if (sscanf(cptr, "+x%n", &coefLenWithX) != EOF && coefLenWithX == 2) {
-                coefLen = 1;
-                coef = 1;
-            } else {
-                return -1;
-            }
+        if (parseCoef(cptr, &coef, &coefLen, &coefLenWithX) == -1) {
+            return -1;
         }
 
         if (coefLenWithX != 0) {
@@ -64,7 +65,7 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         } else {
             cptr += coefLen;
         }
-
+        //Этот кусок тоже можно заменить функцией
         if (coefLen == coefLenWithX || coefLenWithX == 0) {
             power = 0;
         } else if (cptr - s < len) {
@@ -78,6 +79,7 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         }
 
         if (power < coefsCnt){
+            //printf("%u %lg\n", power, coef);
             coefs[coefsCnt - 1 - power] += coef;
         } else {
             return -1;
@@ -128,3 +130,54 @@ int parseEqation(const char s[], unsigned int len, double coefs[], unsigned int 
 
     return 0;
 }
+
+int removeSpaces(char* str)
+{
+    if (str == NULL) {
+        return -1;
+    }
+
+    unsigned int newIdx = 0;
+    size_t len = strlen(str);
+    for (unsigned int idx = 0; idx < len; idx++)
+    {
+        if (!isspace(str[idx])) {
+            str[newIdx] = str[idx];
+            newIdx++;
+        }
+    }
+
+    str[newIdx] = '\0';
+
+    return 0;
+}
+
+int parseCoef(const char* cptr, double* coef, int* coefLen, int* coefLenWithX)
+{
+    sscanf(cptr, "%lf%nx%n", coef, coefLen, coefLenWithX);
+    
+    if (coefLen == 0) {
+        if (sscanf(cptr, "-x%n", coefLenWithX) != EOF && *coefLenWithX == 2) {
+            *coefLen = 1;
+            *coef = -1;
+        } else if (sscanf(cptr, "+x%n", coefLenWithX) != EOF && *coefLenWithX == 2) {
+            *coefLen = 1;
+            *coef = 1;
+        } else {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+/*int parsePower(const char* cptr, unsigned int* power, int* powerLen)
+{
+    sscanf(cptr, "^%u%n", &power, &powerLen);
+    cptr += powerLen;
+    if (powerLen == 0) {
+        power = 1;
+    } else if (powerLen == 1) {
+        return -1;
+    } 
+}*/

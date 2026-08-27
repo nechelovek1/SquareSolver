@@ -13,7 +13,7 @@ const int MAX_COEFS = 20;
 /*!
     Преобразует строку-уравнение в массив коэфициентов.
     \param[in] s строка для парсинга
-    \param[in] len длина строки
+    \param[in] len длина строки (без нулевого символа)
     \param[out] coefs массив для сохранения коэффициентов
     \param[in] coefsCnt длина массива коэффициентов. Длинна массива должна быть равна степени уравнения + 1
     \return 0 - функция выполнилась без ошибок, -1 - в результате выполнения функии возникла ошибка
@@ -23,11 +23,15 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
 /*!
     Преобразует строку-многочлен в массив коэфициентов.
     \param[in] s строка для парсинга
-    \param[in] len длина строки
+    \param[in] len длина строки (без нулевого символа)
     \param[out] coefs массив для сохранения коэффициентов
     \param[in] coefsCnt длина массива коэффициентов. Длинна массива должна быть равна степени многочлена + 1
     \return 0 - функция выполнилась без ошибок, -1 - в результате выполнения функии возникла ошибка
 */
-int parseEqation(const char s[], unsigned int len, double coefs[], unsigned int coefsCnt);
+int parseEqation(const char str[], unsigned int len, double coefs[], unsigned int coefsCnt);
+
+int removeSpaces(char* str);
+
+int parseCoef(const char* cptr, double* coef, int* coefLen, int* coefLenWithX);
 
 #endif

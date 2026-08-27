@@ -17,12 +17,15 @@ const int MAX_STR_LEN = 100;
 void plotParabol(double a, double b, double c);
 double calcParabol(double a, double b, double c, double x);
 
+
 int main(int argc, const char* argv[])
 {
-    int successCnt = runTests(10000000);
-    printf("%d\n", successCnt);
+    runTestsParser();
+    runTestsSquare(10000000);
     return 0;
 }   
+
+
 
 double calcParabol(double a, double b, double c, double x) {
     return a * x * x + b * x + c;

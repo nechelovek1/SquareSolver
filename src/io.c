@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <complex.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
 
 #include "io.h"
