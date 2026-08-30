@@ -7,20 +7,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <float.h>
 
 #include "errors.h"
 #include "parser.h"
 #include "tests.h"
+#include "solvers.h"
 
 const int MAX_STR_LEN = 100;
 
 void plotParabol(double a, double b, double c);
 double calcParabol(double a, double b, double c, double x);
 
+int solvePolynom(double* coefs, unsigned int coefsCnt, double* roots);
+int calculateDerrivativePolynom(double* coefs, unsigned int coefsCnt, double* coefsDerr);
+double findRootBinarySearch(double* coefs, unsigned int coefsCnt, double l, double r, double eps);
+double calcPolynom(const double coefs[], unsigned int coefsCnt, double x);
+
 
 int main(int argc, const char* argv[])
 {
-    const char* tests[] = {
+    /*const char* tests[] = {
         "x^2+x+3+4x+5=0",
         "2.3x-3+4x^2=x-x+6",
         "0=0",
@@ -40,8 +47,12 @@ int main(int argc, const char* argv[])
         parseEqation(tests[i], strlen(tests[i]), coefs, coefCnt);
         printf("%s\n", tests[i]);
         printf("%lg %lg %lg\n", coefs[0], coefs[1], coefs[2]);
-    }
+    }*/
 
+    //plotParabol(1, 2, 5);
+    double a = 0, b = 0, c = 0;
+    scanf("%lf %lf %lf", &a, &b, &c);
+    printf("%lf %lf %lf", a, b, c);
     //runTestsParser();
     //runTestsSquare(10000000);
     return 0;
@@ -90,4 +101,99 @@ void plotParabol(double a, double b, double c)
         }
         putchar('\n');
     }
+}
+
+int solvePolynom(double* coefs, unsigned int coefsCnt, double* roots)
+{
+    const double eps = 1e-6;
+
+    if (coefsCnt > 2) {
+        double* coefsDerr = calloc(coefsCnt - 1, sizeof(double));
+        if (coefsDerr == NULL) {
+            return -1;
+        }
+        calculateDerrivativePolynom(coefs, coefsCnt, coefsDerr);
+
+        double* rootsDerr = calloc(coefsCnt - 1, sizeof(double));
+        if (rootsDerr == NULL) {
+            return -1;
+        }
+
+        int rootsDerrCnt = solvePolynom(coefsDerr, coefsCnt - 1, rootsDerr);
+
+        if (rootsDerrCnt == 0) {
+            if (coefsDerr < 0) {
+                roots[0] = findRootBinarySearch(coefs, coefsCnt, DBL_MAX, DBL_MIN, eps);
+            } else {
+                roots[0] = findRootBinarySearch(coefs, coefsCnt, DBL_MIN, DBL_MAX, eps);
+            }
+
+            for (unsigned int i = 0; i < rootsDerrCnt; i++) 
+            {
+                roots[i] = NAN;
+            }
+
+            return 1;
+        } else {
+
+        }
+
+        //if (calcPolynom(coefsDerr, coefsCnt - 1, )) {
+        //
+        //}
+
+        for (unsigned int i = 1; i < coefsCnt - 1; i++)
+        {
+
+        }
+    } else {
+        
+    }
+} 
+
+int calculateDerrivativePolynom(double* coefs, unsigned int coefsCnt, double* coefsDerr)
+{
+    if (coefs == NULL || coefsDerr == NULL) {
+        return -1;
+    }
+
+    for (unsigned int i = 1; i < coefsCnt; i++)
+    {
+        coefsDerr[i - 1] = coefs[i] * i;
+    }
+
+    return 0;
+}
+
+double findRootBinarySearch(double* coefs, unsigned int coefsCnt, double l, double r, double eps)
+{
+    double root = (l + r) / 2;
+    double y = calcPolynom(coefs, coefsCnt, root);
+
+    while (!isequal(y, 0, eps))
+    {
+        if (y < 0) {
+            l = root;
+        } else {
+            r = root;
+        }
+
+        root = (l + r) / 2;
+        y = calcPolynom(coefs, coefsCnt, root);
+    }
+
+    return root;
+}
+
+double calcPolynom(const double coefs[], unsigned int coefsCnt, double x)
+{
+    double y = 0; double xCur = 1;
+
+    for (unsigned int i = 0; i < coefsCnt; i++)
+    {
+        y += coefs[i] * xCur;
+        xCur *= x;
+    }
+
+    return y;
 }

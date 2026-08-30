@@ -8,9 +8,13 @@
 #include "menu.h"
 #include "io.h"
 #include "parser.h"
+#include "bmp.h"
 
 int solveSquareInLoop(const ProgramOptions* options);
 int getCoefs(const ProgramOptions* options, FILE* input, double* a, double* b, double* c);
+int drawSquareEquation(const char* filename, RootsCnt rootsCnt, double a, double b, double c, double x1, double x2);
+
+const int MAX_BMP_FILENAME_LEN = MAX_STR_LEN + 17;
 
 int main(int argc, char* argv[])
 {
@@ -53,7 +57,7 @@ int main(int argc, char* argv[])
                 break;
             case 'r':
                 showSettingsValues(&options);
-                solveSquareInLoop (&options);
+                solveSquareInLoop(&options);
                 printf("Solve loop done\n");
                 break;
             default:
@@ -69,6 +73,8 @@ int main(int argc, char* argv[])
 
 int solveSquareInLoop(const ProgramOptions* options)
 {
+    int equationsCnt = 0;
+
     if (options == NULL) {
         return -1;
     }
@@ -106,22 +112,37 @@ int solveSquareInLoop(const ProgramOptions* options)
         }
 
         double a = 0, b = 0, c = 0;
+        double x1 = 0, x2 = 0;
+        _Complex double cx1 = 0, cx2 = 0;
+        RootsCnt rootsCnt = ZERO_ROOTS;
 
         int getCoefsRes = getCoefs(options, input, &a, &b, &c);
         if (getCoefsRes == -1) {
             continue;
         }
 
-        if (options->useComplexEnter || options->showComplexRoots) {
-            _Complex double x1 = 0, x2 = 0;
-            RootsCnt rootsCnt = solveSquareComplex(a, b, c, &x1, &x2);
+        if (options->showComplexRoots) {
+            rootsCnt = solveSquareComplex(a, b, c, &cx1, &cx2);
             fPrintEquation(output, a, b, c);
-            fPrintRootsComplex(output, rootsCnt, x1, x2);
+            fPrintRootsComplex(output, rootsCnt, cx1, cx2);
+
+            if (isequal(cimag(cx1), 0, EPS) && isequal(cimag(cx2), 0, EPS)) {
+                x1 = creal(cx1);
+                x2 = creal(cx2);
+            } else {
+                rootsCnt = ZERO_ROOTS;
+            }
         } else {
-            double x1 = 0, x2 = 0;
-            RootsCnt rootsCnt = solveSquare(a, b, c, &x1, &x2);
+            rootsCnt = solveSquare(a, b, c, &x1, &x2);
             fPrintEquation(output, a, b, c);
             fPrintRoots(output, rootsCnt, x1, x2);
+        }
+
+        if (options->drawGraph) {
+            char bmpFilename[MAX_BMP_FILENAME_LEN];
+            snprintf(bmpFilename, MAX_BMP_FILENAME_LEN, "%s_%d.bmp", options->bmpName, equationsCnt);
+            drawSquareEquation(bmpFilename, rootsCnt, a, b, c, x1, x2);
+            equationsCnt++;
         }
     }
 
@@ -159,9 +180,9 @@ int getCoefs(const ProgramOptions* options, FILE* input, double* a, double* b, d
             //continue;
             return -1;
         } else {
-            *a = coefs[0];
+            *a = coefs[2];
             *b = coefs[1];
-            *c = coefs[2];
+            *c = coefs[0];
         }
 
     } else {
@@ -177,6 +198,53 @@ int getCoefs(const ProgramOptions* options, FILE* input, double* a, double* b, d
         }
         fClearInputBuffer(input);
     }
+
+    return 0;
+}
+
+int drawSquareEquation(const char* filename, RootsCnt rootsCnt, double a, double b, double c, double x1, double x2)
+{
+    if (filename == NULL)
+    {
+        return -1;
+    }
+
+    if (rootsCnt == ERR_ROOTS) {
+        return -1;
+    }
+
+    BmpOptions fileOptions = {};
+
+    unsigned int height = 1920;
+    unsigned int width = 1080;
+
+    openBmp(filename, &fileOptions, height, width);
+
+    GraphOptions graphOptions = {.centerX = 1000, .centerY = 500, .pixelsPerUnit = 25, .samplesPerPixel = 100};
+
+    setColorBmp(&fileOptions, BMP_GREY);    
+    drawGrid(&fileOptions, &graphOptions);
+
+    setColorBmp(&fileOptions, BMP_WHITE);    
+    drawAxes(&fileOptions, &graphOptions);
+
+    const int coefsCnt = 3;
+    double coefs[coefsCnt] = {c, b, a};
+
+    setColorBmp(&fileOptions, BMP_YELLOW);
+    drawPolynom(&fileOptions, &graphOptions, coefs, coefsCnt);
+
+    setColorBmp(&fileOptions, BMP_BLUE);
+
+    if (rootsCnt == ONE_ROOTS) {
+        drawGraphPoint(&fileOptions, &graphOptions, x1, 0);
+    } else if (rootsCnt == TWO_ROOTS) {
+        drawGraphPoint(&fileOptions, &graphOptions, x1, 0);
+        drawGraphPoint(&fileOptions, &graphOptions, x2, 0);
+    }
+
+    writeBitmapBmp(&fileOptions);
+    closeBmp(&fileOptions);
 
     return 0;
 }

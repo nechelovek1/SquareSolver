@@ -44,7 +44,7 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
     }
 
     if (power < coefsCnt){
-        coefs[coefsCnt - 1 - power] += coef;
+        coefs[power] += coef;
     } else {
         return -1;
     }
@@ -82,7 +82,7 @@ int parsePolynom(const char s[], unsigned int len, double coefs[], unsigned int 
         }
 
         if (power < coefsCnt){
-            coefs[coefsCnt - 1 - power] += coef;
+            coefs[power] += coef;
         } else {
             return -1;
         }

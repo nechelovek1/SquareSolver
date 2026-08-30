@@ -1,3 +1,7 @@
+/*!
+    \file
+    \brief Библиотека обработки ошибок
+*/
 #ifndef ERRORS_H
 #define ERRORS_H
 
@@ -15,16 +19,14 @@ bool assertMessage(bool expressionResult, const char message[]);
 /*!
     Выводит в поток ошибок сообщение если действительное число является inf или nan
     \param[in] a - действительное число
-    \return 
+    \return true, если значение ложно, false если значение истинно
 */
 bool assertInfNaN(double a);
 
-/*
+/*!
     Выводит в поток ошибок сообщение если комплексное число является inf или nan
-    Аргументы:
-        _Complex double a - комплексное число
-    Возвращаемое значение:
-        bool
+    \param[in] c - комплексное число
+    \return true, если значение ложно, false если значение истинно
 */
 bool assertInfNaNComplex(_Complex double c);
 

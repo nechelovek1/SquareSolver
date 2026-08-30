@@ -127,7 +127,7 @@ void showMenu()
         {.menuCode = 'e', .menuString = "exit"}
     };
     
-    unsigned int menuLen = sizeof(menu) / sizeof(MenuPoint);
+    unsigned int menuLen = sizeof(menu) / sizeof(menu[0]);
 
     for (unsigned int i = 0; i < menuLen; i++) 
     {
@@ -146,6 +146,9 @@ void printHelpConsole()
         "-c -C            use complex input\n"
         "-p -p            use parser for equasions\n"
         "-r -R            show complex roots\n"
+        "-d -D <name> name of file for saving graphics of equation.\n"
+        "                 save every graph in <name>_<num>.bmp\n" 
+        "                 If omited, dont save graph\n"
     );
 }
 
@@ -157,7 +160,7 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options)
 
     int opt = 0;
 
-    while ((opt = getopt(argc, argv, "I:i:O:o:hHcCrRpP")) != -1) 
+    while ((opt = getopt(argc, argv, "I:i:O:o:hHcCrRpPd:D:")) != -1) 
     {
         switch(tolower(opt))
         {
@@ -187,6 +190,14 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options)
             case 'p':
                 options->useParseEquation = true;
                 break;
+            case 'd':
+                if (optarg == NULL) {
+                    printf("Missing argument after -d\n");
+                    return PARSE_MISSING_ARG;
+                }
+                options->drawGraph = true;
+                strncpy(options->bmpName, optarg, MAX_STR_LEN);
+                break;
             default:
                 printf("Unknown option: %c\n", opt);
                 return PARSE_UNKNOWN_OPT;
@@ -195,3 +206,4 @@ ParseError parseArgs(int argc, char* argv[], ProgramOptions* options)
     
     return PARSE_OK;
 }
+
