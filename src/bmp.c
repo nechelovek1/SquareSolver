@@ -4,20 +4,7 @@
 #include <math.h>
 
 #include "bmp.h"
-
-
-double calcPolynom(const double coefs[], unsigned int coefsCnt, double x)
-{
-    double y = 0; double xCur = 1;
-
-    for (unsigned int i = 0; i < coefsCnt; i++)
-    {
-        y += coefs[i] * xCur;
-        xCur *= x;
-    }
-
-    return y;
-}
+#include "solvers.h"
 
 int openBmp(const char* filename, BmpOptions* fileOptions, unsigned int width, unsigned int height)
 {
@@ -152,7 +139,7 @@ int drawPolynom(BmpOptions* fileOptions, GraphOptions* graphOptions, const doubl
         return -1;
     }
 
-    double minY = (double) (fileOptions->height - graphOptions->centerY) / graphOptions->pixelsPerUnit;
+    //double minY = (double) (fileOptions->height - graphOptions->centerY) / graphOptions->pixelsPerUnit;
     double maxY = (double) graphOptions->centerY / graphOptions->pixelsPerUnit;
     double minX = (double) -graphOptions->centerX / graphOptions->pixelsPerUnit;
 

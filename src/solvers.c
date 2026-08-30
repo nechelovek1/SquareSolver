@@ -149,3 +149,16 @@ bool isequalComplex(_Complex double c1, _Complex double c2, double eps)
 {
     return (isequal(creal(c1), creal(c2), eps) && isequal(cimag(c2), cimag(c2), eps));
 }
+
+double calcPolynom(const double coefs[], unsigned int coefsCnt, double x)
+{
+    double y = 0; double xCur = 1;
+
+    for (unsigned int i = 0; i < coefsCnt; i++)
+    {
+        y += coefs[i] * xCur;
+        xCur *= x;
+    }
+
+    return y;
+}

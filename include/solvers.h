@@ -99,4 +99,13 @@ bool isequal(double v1, double v2, double eps);
 */
 bool isequalComplex(_Complex double c1, _Complex double c2, double eps);
 
+/*!
+    Вычисляет значение многочлена в точке x
+    \param[in] coefs массив коэффициентов
+    \param[in] coefsCnt количество коэффициентов (степень многочлена + 1)
+    \param[in] x значение для подстановки в многочлен
+    \return значение многочлена в точке x
+*/
+double calcPolynom(const double coefs[], unsigned int coefsCnt, double x);
+
 #endif

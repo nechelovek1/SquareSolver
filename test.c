@@ -27,7 +27,7 @@ double calcPolynom(const double coefs[], unsigned int coefsCnt, double x);
 
 int main(int argc, const char* argv[])
 {
-    /*const char* tests[] = {
+    const char* tests[] = {
         "x^2+x+3+4x+5=0",
         "2.3x-3+4x^2=x-x+6",
         "0=0",
@@ -47,14 +47,10 @@ int main(int argc, const char* argv[])
         parseEqation(tests[i], strlen(tests[i]), coefs, coefCnt);
         printf("%s\n", tests[i]);
         printf("%lg %lg %lg\n", coefs[0], coefs[1], coefs[2]);
-    }*/
+    }
 
-    //plotParabol(1, 2, 5);
-    double a = 0, b = 0, c = 0;
-    scanf("%lf %lf %lf", &a, &b, &c);
-    printf("%lf %lf %lf", a, b, c);
-    //runTestsParser();
-    //runTestsSquare(10000000);
+    runTestsSquare(10000000);
+    
     return 0;
 }   
 

@@ -15,7 +15,7 @@ int showSettingsValues(const ProgramOptions* options)
         return -1;
     }
 
-    printf("| %20s | %20s | %12s | %12s | %10s |\n", "INPUT", "OUTPUT", "COMPL_ROOTS", "COMPL_ENTER", "PARSER");
+    printf("| %20s | %20s | %20s | %12s | %12s |\n", "INPUT", "OUTPUT", "BMP_NAME", "COMPL_ROOTS", "PARSER");
     
     if (options->inputFilename[0] == '\0') {
         printf("| %20s ", "stdin");
@@ -28,9 +28,15 @@ int showSettingsValues(const ProgramOptions* options)
     } else {
         printf("| %20s ", options->outputFilename);
     }
+
+    if (!options->drawGraph) {
+        printf("| %20s ", "<NO>");
+    } else {
+        printf("| %20s ", options->bmpName);
+    }
     
-    printf("| %12d | %12d ", options->showComplexRoots, options->useComplexEnter);
-    printf("| %10d |\n", options->useParseEquation);
+    printf("| %12s ", options->showComplexRoots ? "ON" : "OFF");
+    printf("| %12s |\n", options->useParseEquation ? "ON" : "OFF");
 
     return 0;
 }
@@ -40,8 +46,9 @@ void showSettingsMenu()
     MenuPoint menu[] = {
         {.menuCode = 'i', .menuString = "change input file"},
         {.menuCode = 'o', .menuString = "change output file"},
+        {.menuCode = 'b', .menuString = "change bmp file"},
         {.menuCode = 'r', .menuString = "change option (print complex roots)"},
-        {.menuCode = 'c', .menuString = "change option (use complex enter)"},
+        //{.menuCode = 'c', .menuString = "change option (use complex enter)"},
         {.menuCode = 'p', .menuString = "change option (use parser)"},
         {.menuCode = 'e', .menuString = "exit"}
     };
@@ -65,6 +72,7 @@ int setDefaultSettings(ProgramOptions* options)
     options->showComplexRoots = false;
     options->useComplexEnter = false;
     options->useParseEquation = false;
+    options->drawGraph = false;
 
     showSettingsValues(options);
 
@@ -96,6 +104,13 @@ int setUserSettings(ProgramOptions* options)
             case 'o':
                 printf("Enter output filename (Press Enter for stdout): ");
                 fGetString(stdin, options->outputFilename, MAX_STR_LEN);
+                break;
+            case 'b':
+                printf("Enter BMP name (Press Enter for no): ");
+                fGetString(stdin, options->bmpName, MAX_STR_LEN);
+                if (options->bmpName[0] == '\0') {
+                    options->drawGraph = false;
+                }
                 break;
             case 'r':
                 options->showComplexRoots = !options->showComplexRoots;

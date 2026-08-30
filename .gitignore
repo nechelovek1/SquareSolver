@@ -8,3 +8,7 @@ TODO
 html
 Doxyfile
 *.bmp
+output
+solver
+gencoefs.c
+testbmp.c
